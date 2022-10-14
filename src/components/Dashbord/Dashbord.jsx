@@ -53,6 +53,7 @@ const Dashbord = () => {
     const navigate = useNavigate();
     const [feedbacks, setFeedbacks] = useState([]);
     const [selectionModel, setSelectionModel] = useState([]);
+    const [search, setSearch] = useState('')
 
     // Get Feedbacks
     const getFeedback = async () => {
@@ -78,12 +79,12 @@ const Dashbord = () => {
     }
 
     // Row Delete handle.
-    const handleDelete = async ()=>{
+    const handleDelete = async () => {
         let rows = {
-            ids:selectionModel
+            ids: selectionModel
         }
         try {
-            const result = await axios.post(genralFun.getUrl() + "/api/feedback/delete" ,rows)
+            const result = await axios.post(genralFun.getUrl() + "/api/feedback/delete", rows)
             if (result) {
                 getFeedback();
             }
@@ -92,11 +93,28 @@ const Dashbord = () => {
         }
     }
 
+    // Search Handle
+    const handleSearch = (e) => {
+        setSearch(e.target.value);
+        if (search !== "") {
+            setFeedbacks([]);
+            const result = feedbacks.filter(feedback => {
+                return feedback.name.toLowerCase().includes(e.target.value.toLowerCase()) || feedback.email.toLowerCase().includes(e.target.value.toLowerCase())
+            })
+            if (result.length !== 0) {
+                setFeedbacks(result);
+            } else {
+                getFeedback();
+            }
+        } else {
+            getFeedback();
+        }
+    }
+
 
     useEffect(() => {
         getFeedback();
     }, [])
-
     return (
         <Box className="dashboard" mt={3}>
             {/* Header Section */}
@@ -108,12 +126,13 @@ const Dashbord = () => {
                     </Typography>
                     <Typography variant='p'
                         sx={{ fontSize: "14px", color: "#4D4F5C" }}>
-                        112 records found. 3 filters applied
+                        {`${feedbacks.length} records found.`}
                     </Typography>
 
                 </Box>
                 <Stack direction={'row'} gap={1}>
                     <StyledInputBase placeholder='search...'
+                        onChange={e => handleSearch(e)}
                         endAdornment={
                             <InputAdornment position="end">
                                 <Search sx={{ color: "#B7B7B7" }} />
