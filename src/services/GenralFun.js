@@ -1,3 +1,3 @@
 export const getUrl = () => {
-    return "http://localhost:9000"
+    return "https://aromatic-bar-api.herokuapp.com"
 }
