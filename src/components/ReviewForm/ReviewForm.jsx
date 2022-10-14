@@ -37,20 +37,20 @@ const ReviewForm = () => {
   function validateEmail(email) {
     var re = /\S+@\S+\.\S+/;
     return re.test(email);
-}
+  }
 
   // Submit Handle function
   const submitHandle = async () => {
     if (customerName === "" || email === "" || phone === "" || beverageRating === "" || restaurantCleanRating === "" || overallExperience === "") {
       setMessage("Please Fill All Fields.")
       setFlag(true);
-    }else if (!validateEmail(email)) {
+    } else if (!validateEmail(email)) {
       setMessage("Please enter valid email");
       setFlag(true);
-  }else if(phone.length>14 || phone.length<13){
-    setMessage("Please enter valid Number");
-    setFlag(true);
-  }
+    } else if (phone.length > 14 || phone.length < 13) {
+      setMessage("Please enter valid Number");
+      setFlag(true);
+    }
     else {
       let customer = {
         name: customerName,
@@ -62,12 +62,13 @@ const ReviewForm = () => {
         overallExperience: overallExperience
       }
       try {
-        const result = axios.post(genralFun.getUrl() + '/api/feedback', customer);
+        const result = await axios.post(genralFun.getUrl() + '/api/feedback', customer);
         if (result) {
           navigate('/success');
         }
       } catch (error) {
-        console.log(error.error);
+        await setMessage("Please enter unique Phone number and email Id.");
+        setFlag(true);
       }
     }
   }
@@ -86,7 +87,7 @@ const ReviewForm = () => {
       {/* Alert */}
       {
         flag ? <Box my={2} sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
-          <Alert sx={{ width: "100%" }} onClose={(e) => {setFlag(false) }} severity="error">{message}</Alert>
+          <Alert sx={{ width: "100%" }} onClose={(e) => { setFlag(false) }} severity="error">{message}</Alert>
         </Box> : ""
       }
 
